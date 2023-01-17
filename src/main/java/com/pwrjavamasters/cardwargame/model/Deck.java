@@ -13,6 +13,7 @@ public class Deck {
     private Long id;
 
     @OneToMany
+    @JoinColumn(name = "deck_id")
     private List<Card> deck = new ArrayList<>();
 
     public Long getId() {
