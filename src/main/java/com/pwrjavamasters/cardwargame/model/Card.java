@@ -13,7 +13,6 @@ public class Card {
 
     private Suit suit;
     private int rank;
-
     public Long getId() {
         return id;
     }
