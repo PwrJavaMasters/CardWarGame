@@ -2,7 +2,6 @@ package com.pwrjavamasters.cardwargame.model;
 
 import javax.persistence.*;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 @Entity
@@ -13,5 +12,13 @@ public class Player {
     private Long id;
 
     @OneToMany
-    private List<Card> hand = new ArrayList<>();
+    private List<Card> cards = new ArrayList<>();
+
+    public Player(List<Card> hand) {
+        this.cards = hand;
+    }
+
+    public Player() {
+
+    }
 }
