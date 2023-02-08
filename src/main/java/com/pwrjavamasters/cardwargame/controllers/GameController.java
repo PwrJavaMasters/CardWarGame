@@ -29,4 +29,12 @@ public class GameController {
         return "new game";
     }
 
+    @RequestMapping("/game/make-move")
+    public String makeMove(){
+
+        gameService.makeMove();
+
+        return "next move";
+    }
+
 }

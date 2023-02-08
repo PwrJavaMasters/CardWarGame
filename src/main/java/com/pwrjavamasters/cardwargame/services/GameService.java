@@ -6,5 +6,5 @@ public interface GameService {
 
     public void startNewGame();
 
-    public void makeMove();
+    public boolean makeMove();
 }
