@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.Random;
 
 @Service
@@ -46,8 +45,8 @@ public class GameServiceImpl implements GameService{
         long seed = System.nanoTime();
         Collections.shuffle(deck, new Random(seed));
 
-        player1.setCards(deck.subList(0,26));
-        player2.setCards(deck.subList(26,52));
+        player1.setCards(new ArrayList<>(deck.subList(0,26)));
+        player2.setCards(new ArrayList<>(deck.subList(26,52)));
 
         playerRepository.save(player1);
         playerRepository.save(player2);
@@ -57,33 +56,25 @@ public class GameServiceImpl implements GameService{
     @Override
     public boolean makeMove() {
 
-        Card cardToRemoveP1;
-        Card cardToRemoveP2;
         boolean isWinner = false;
         boolean isFinished = false;
         ArrayList<Card> stake = new ArrayList<>();
-        List<Card> p1Cards = player1.getCards();
-        List<Card> p2Cards = player2.getCards();
 
         while (!isFinished){
-            if(player1.getCards().get(0).getRank() > p2Cards.get(0).getRank()){
-                cardToRemoveP1 = p1Cards.remove(0);
-                cardToRemoveP2 = p2Cards.remove(0);
+            if(player1.getCards().get(0).getRank() > player2.getCards().get(0).getRank()){
 
-                p1Cards.add(cardToRemoveP2);
-                p1Cards.add(cardToRemoveP1);
-                p1Cards.addAll(stake);
+                player1.getCards().add(player2.getCards().remove(0));
+                player1.getCards().add(player1.getCards().remove(0));
+                player1.getCards().addAll(stake);
 
                 isFinished = true;
 
                 System.out.println("player 1 wins the round");
 
-            } else if (p1Cards.get(0).getRank() < p2Cards.get(0).getRank()) {
-                cardToRemoveP1 = p1Cards.remove(0);
-                cardToRemoveP2 = p2Cards.remove(0);
+            } else if (player1.getCards().get(0).getRank() < player2.getCards().get(0).getRank()) {
 
-                player2.getCards().add(cardToRemoveP1);
-                player2.getCards().add(cardToRemoveP2);
+                player2.getCards().add(player1.getCards().remove(0));
+                player2.getCards().add(player2.getCards().remove(0));
                 player2.getCards().addAll(stake);
 
                 isFinished = true;
@@ -92,8 +83,8 @@ public class GameServiceImpl implements GameService{
 
             } else {
 
-                stake.add(p1Cards.remove(0));
-                stake.add(p2Cards.remove(0));
+                stake.add(player1.getCards().remove(0));
+                stake.add(player2.getCards().remove(0));
 
                 isFinished = false;
 
@@ -101,11 +92,10 @@ public class GameServiceImpl implements GameService{
             }
         }
 
-        player1.setCards(p1Cards);
-        player2.setCards(p2Cards);
-
+        playerRepository.deleteAll();
         playerRepository.save(player1);
         playerRepository.save(player2);
+
 
         if (player2.getCards().size() == 52 || player1.getCards().size() == 52) isWinner = true;
 
